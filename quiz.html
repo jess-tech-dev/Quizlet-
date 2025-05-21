@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ultimate HTML Quiz</title>
+  <style>
+    :root {
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --accent: #4895ef;
+      --dark: #1a1a2e;
+      --light: #f8f9fa;
+      --success: #4cc9f0;
+      --error: #f72585;
+      --transition: all 0.3s ease;
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      color: var(--dark);
+    }
+
+    .quiz-container {
+      background-color: white;
+      max-width: 700px;
+      width: 100%;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      transition: var(--transition);
+    }
+
+    .quiz-container:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-size: 2rem;
+      color: var(--primary);
+      position: relative;
+    }
+
+    h1::after {
+      content: "";
+      width: 60px;
+      height: 4px;
+      background: var(--accent);
+      display: block;
+      margin: 10px auto 0;
+      border-radius: 2px;
+    }
+
+    .question-block {
+      margin-bottom: 2rem;
+    }
+
+    .question-text {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(67, 97, 238, 0.05);
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .option input {
+      display: none;
+    }
+
+    .custom-radio {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--primary);
+      border-radius: 50%;
+      position: relative;
+    }
+
+    .option input:checked + label {
+      border-color: var(--accent);
+      background-color: rgba(67, 97, 238, 0.1);
+    }
+
+    .option input:checked + label .custom-radio {
+      background: var(--secondary);
+      border-color: var(--secondary);
+    }
+
+    .custom-radio::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 10px;
+      height: 10px;
+      background: white;
+      border-radius: 50%;
+      display: none;
+    }
+
+    .option input:checked + label .custom-radio::after {
+      display: block;
+    }
+
+    button {
+      margin-top: 2rem;
+      padding: 14px;
+      width: 100%;
+      font-size: 1rem;
+      font-weight: bold;
+      color: white;
+      background-color: var(--primary);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    button:hover {
+      background-color: var(--secondary);
+    }
+
+    #result {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      text-align: center;
+      display: none;
+    }
+
+    #result.correct {
+      background-color: rgba(76, 201, 240, 0.2);
+      color: var(--success);
+    }
+
+    #result.incorrect {
+      background-color: rgba(247, 37, 133, 0.2);
+      color: var(--error);
+    }
+
+    @media (max-width: 600px) {
+      .quiz-container {
+        padding: 1.5rem;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="quiz-container" role="main">
+    <h1>HTML Mastery Quiz</h1>
+    <form id="quizForm"></form>
+    <button id="submitBtn" type="button">Check My Score</button>
+    <div id="result"></div>
+  </main>
+
+  <script>
+    const quizData = [
+      {
+        question: "1. What does HTML stand for?",
+        options: [
+          "Hyper Text Markup Language",
+          "High Tech Modern Language",
+          "Hyperlinks and Text Markup Language",
+          "Home Tool Markup Language"
+        ],
+        answer: "Hyper Text Markup Language"
+      },
+      {
+        question: "2. Which tag is used to create a hyperlink?",
+        options: ["<link>", "<a>", "<href>", "<hyperlink>"],
+        answer: "<a>"
+      },
+      {
+        question: "3. What is the correct HTML element for the largest heading?",
+        options: ["<h6>", "<heading>", "<h1>", "<head>"],
+        answer: "<h1>"
+      },
+      {
+        question: "4. Which tag defines a line break?",
+        options: ["<lb>", "<break>", "<br>", "<newline>"],
+        answer: "<br>"
+      },
+      {
+        question: "5. Which attribute is used to define inline styles in HTML?",
+        options: ["class", "font", "style", "css"],
+        answer: "style"
+      }
+    ];
+
+    const form = document.getElementById("quizForm");
+    const submitBtn = document.getElementById("submitBtn");
+    const resultDiv = document.getElementById("result");
+
+    // Generate quiz
+    quizData.forEach((item, index) => {
+      const block = document.createElement("div");
+      block.className = "question-block";
+
+      const question = document.createElement("div");
+      question.className = "question-text";
+      question.textContent = item.question;
+
+      const options = document.createElement("div");
+      options.className = "options";
+
+      item.options.forEach((opt, i) => {
+        const id = `q${index}_${i}`;
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "option";
+
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.id = id;
+        input.name = `question${index}`;
+        input.value = opt;
+
+        const label = document.createElement("label");
+        label.htmlFor = id;
+
+        const radio = document.createElement("span");
+        radio.className = "custom-radio";
+
+        label.appendChild(radio);
+        label.appendChild(document.createTextNode(opt));
+        wrapper.appendChild(input);
+        wrapper.appendChild(label);
+        options.appendChild(wrapper);
+      });
+
+      block.appendChild(question);
+      block.appendChild(options);
+      form.appendChild(block);
+    });
+
+    // Evaluate answers
+    submitBtn.addEventListener("click", () => {
+      let score = 0;
+
+      quizData.forEach((item, index) => {
+        const selected = form.querySelector(`input[name="question${index}"]:checked`);
+        if (selected && selected.value === item.answer) {
+          score++;
+        }
+      });
+
+      const percentage = (score / quizData.length) * 100;
+      resultDiv.style.display = "block";
+
+      if (percentage === 100) {
+        resultDiv.textContent = `Perfect! ${score}/${quizData.length} 🎉 You’re an HTML wizard!`;
+        resultDiv.className = "correct";
+      } else if (percentage >= 60) {
+        resultDiv.textContent = `Good job! ${score}/${quizData.length} 👍 Keep going!`;
+        resultDiv.className = "correct";
+      } else {
+        resultDiv.textContent = `You got ${score}/${quizData.length}. 💪 Keep studying and you'll master it!`;
+        resultDiv.className = "incorrect";
+      }
+
+      resultDiv.scrollIntoView({ behavior: "smooth" });
+    });
+  </script>
+</body>
+<br>
+
+</html>
